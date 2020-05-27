@@ -1,0 +1,23 @@
+#!/bin/bash
+cp btsp ..
+cd ..
+
+gcc -o battlespace battlespace.c
+
+TOT=0
+for i in {1..1000}
+do
+	./map_gen.py > map
+	OUT=$(./battlespace map btsp)
+	TOT=$(( TOT+OUT ))
+	echo -n .
+done
+echo
+
+TOT=$(( TOT/1000 ))
+echo $TOT
+
+rm btsp
+rm map
+
+cd cclaude

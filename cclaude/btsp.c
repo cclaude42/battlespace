@@ -6,7 +6,7 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/05/27 15:02:24 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/05/27 15:36:35 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	print_pdf(int pdf[10][10])
 
 // TOOLS
 
-int	ft_abs(int n)
+int		ft_abs(int n)
 {
 	if (n < 0)
 		return (-n);
@@ -58,12 +58,11 @@ int	ft_abs(int n)
 		return (n);
 }
 
-int	ft_strcmp(const char *s1, const char *s2)
+int		ft_strcmp(const char *s1, const char *s2)
 {
 	size_t	i;
 
 	i = 0;
-
 	if (!s1 || !s2)
 		return (-1);
 	while (s1[i] == s2[i])
@@ -103,7 +102,7 @@ int		shoot(int i, int j)
 		return (MISS);
 }
 
-void	shield_checker(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
+void	clear_blocked(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 {
 	int	x;
 	int	y;
@@ -118,7 +117,7 @@ void	shield_checker(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 		{
 			if ((*map)[x][y] == 'b')
 			{
-				print_map(*map);
+				// print_map(*map);
 				if (shoot(x, y) == BLOCKED)
 					return ;
 				(*map)[x][y] = 'x';
@@ -130,169 +129,143 @@ void	shield_checker(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 	}
 }
 
-// MAIN
-
-int	main(void)
+int		find_max(char map[10][10], int pdf[10][10])
 {
-	// Pas interdit !!!!!!
-	char	map[10][10];
-	int		pdf[10][10];
-	char	in[10];
-	char	out[4];
-	int		i;
-	int		j;
-	int		idx;
-	int		max;
+	int	max;
+	int	i;
+	int	j;
 
-	// MAP FILL (ONE TIME!)
-
-	i = 0;
-	while (i < 10)
-	{
-		j = 0;
-		while (j < 10)
-			map[i][j++] = '.';
-		i++;
-	}
-
-	int w;
-	for (w = 0 ; w < 200 ; w++ ) {
-	// LOOP : Assign coeff, find target, kill target
-	i = 0;
 	max = 0;
+	i = 0;
 	while (i < 10)
 	{
 		j = 0;
 		while (j < 10)
 		{
-			// printf("%c", map[i][j]);
-			pdf[i][j] = 9 - ft_abs((float)i - 4.5) - ft_abs((float)j - 4.5);
-			if (map[i][j] != 'x' && j > 0 && map[i][j - 1] != 'x')
-				pdf[i][j] += 12;
-			if (map[i][j] != 'x' && j < 9 && map[i][j + 1] != 'x')
-				pdf[i][j] += 12;
-			if (map[i][j] != 'x' && i > 0 && map[i - 1][j] != 'x')
-				pdf[i][j] += 12;
-			if (map[i][j] != 'x' && i < 9 && map[i + 1][j] != 'x')
-				pdf[i][j] += 12;
-			if (map[i][j] != 'x' && i > 0 && j > 0 && map[i - 1][j - 1] != 'x')
-				pdf[i][j] += 8;
-			if (map[i][j] != 'x' && i > 0 && j < 9 && map[i - 1][j + 1] != 'x')
-				pdf[i][j] += 8;
-			if (map[i][j] != 'x' && i < 9 && j > 0 && map[i + 1][j - 1] != 'x')
-				pdf[i][j] += 8;
-			if (map[i][j] != 'x' && i < 9 && j < 9 && map[i + 1][j + 1] != 'x')
-				pdf[i][j] += 8;
 			if (pdf[i][j] > max && map[i][j] == '.')
 				max = pdf[i][j];
 			j++;
 		}
 		i++;
 	}
+	return (max);
+}
 
-	// PRINT RESULTS
-	print_map(map);
-	// print_pdf(pdf);
+void	find_target(char map[10][10], int pdf[10][10], int *i, int *j)
+{
+	int	max;
 
-	// (find target)
+	max = find_max(map, pdf);
+	*i = 0;
+	while (*i < 10)
+	{
+		*j = 0;
+		while (*j < 10)
+		{
+			if (pdf[*i][*j] == max && map[*i][*j] == '.')
+				break ;
+			(*j)++;
+		}
+		if (*j < 10 && pdf[*i][*j] == max && map[*i][*j] == '.')
+			break ;
+		(*i)++;
+	}
+}
+
+void	fill_map(char (*map)[10][10])
+{
+	int		i;
+	int		j;
+
+	i = 0;
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+			(*map)[i][j++] = '.';
+		i++;
+	}
+}
+
+int		compute_coeff(char map[10][10], int i, int j)
+{
+	int	n;
+
+	n = 9 - ft_abs((float)i - 4.5) - ft_abs((float)j - 4.5);
+	if (map[i][j] != 'x' && j > 0 && map[i][j - 1] != 'x')
+		n += 12;
+	if (map[i][j] != 'x' && j < 9 && map[i][j + 1] != 'x')
+		n += 12;
+	if (map[i][j] != 'x' && i > 0 && map[i - 1][j] != 'x')
+		n += 12;
+	if (map[i][j] != 'x' && i < 9 && map[i + 1][j] != 'x')
+		n += 12;
+	if (map[i][j] != 'x' && i > 0 && j > 0 && map[i - 1][j - 1] != 'x')
+		n += 8;
+	if (map[i][j] != 'x' && i > 0 && j < 9 && map[i - 1][j + 1] != 'x')
+		n += 8;
+	if (map[i][j] != 'x' && i < 9 && j > 0 && map[i + 1][j - 1] != 'x')
+		n += 8;
+	if (map[i][j] != 'x' && i < 9 && j < 9 && map[i + 1][j + 1] != 'x')
+		n += 8;
+	return (n);
+}
+
+void	map_coeff(char map[10][10], int (*pdf)[10][10])
+{
+	int	i;
+	int	j;
+
 	i = 0;
 	while (i < 10)
 	{
 		j = 0;
 		while (j < 10)
 		{
-			if (pdf[i][j] == max && map[i][j] == '.')
-				break;
+			(*pdf)[i][j] = compute_coeff(map, i, j);
 			j++;
 		}
-		if (j < 10 && pdf[i][j] == max && map[i][j] == '.')
-			break;
 		i++;
 	}
-	if (i == 10 || j == 10)
-		return (0);
+}
 
-	// (kill target)
-	out[0] = 65 + i;
-	out[1] = 48 + j;
-	out[2] = '\n';
-	out[3] = '\0';
-	write(1, &out, 3);
-	read(0, &in, 10);
+void	react(char (*map)[10][10], int (*pdf)[10][10], int ij, int hit)
+{
+	int	i;
+	int	j;
 
-	idx = 0;
-	while (in[idx] != '\n')
-		idx++;
-	// write(2, in, idx+1);
-	in[idx] = '\0';
-	if (ft_strcmp(in, "BLOCKED") == 0)
-		map[i][j] = 'b';
-	else if (ft_strcmp(in, "SUNK") == 0)
-		shield_checker(&map, &pdf, i, j);
+	i = ij / 10;
+	j = ij % 10;
+	if (hit == BLOCKED)
+		(*map)[i][j] = 'b';
+	else if (hit == SUNK)
+		clear_blocked(map, pdf, i, j);
 	else
 	{
-		map[i][j] = 'x';
-		pdf[i][j] = 0;
+		(*map)[i][j] = 'x';
+		(*pdf)[i][j] = 0;
 	}
+}
 
+// MAIN
+
+int		main(void)
+{
+	char	map[10][10];
+	int		pdf[10][10];
+	int		i;
+	int		j;
+
+	fill_map(&map);
+	while (1)
+	{
+		map_coeff(map, &pdf);
+		// print_map(map);
+		// print_pdf(pdf);
+		find_target(map, pdf, &i, &j);
+		if (i == 10 || j == 10)
+			return (0);
+		react(&map, &pdf, 10 * i + j, shoot(i, j));
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// FIRST LOOP ! BASE MAP
-
-	// out[2] = '\n';
-	// out[3] = '\0';
-	// i = 0;
-	// while (i < 10)
-	// {
-	// 	j = 0;
-	// 	out[0] = 65 + i;
-	// 	while (j < 10)
-	// 	{
-	// 		out[1] = 48 + j;
-	// 		write(1, &out, 3);
-	// 		read(0, &in, 10);
-	// 		if (ft_strcmp(in, "BLOCKED\n") == 0)
-	// 			map[i][j] = '.';
-	// 		else
-	// 			map[i][j] = 'x';
-	// 		j++;
-	// 	}
-	// 	i++;
-	// }
-
-
-	// SECOND LOOP ! AFTER SHIELD
-
-	// i = 0;
-	// while (i < 10)
-	// {
-	// 	j = 0;
-	// 	out[0] = 65 + i;
-	// 	while (j < 10)
-	// 	{
-	// 		out[1] = 48 + j;
-	// 		if (map[i][j] == '.')
-	// 		{
-	// 			write(1, &out, 0);
-	// 			read(0, &in, 10);
-	// 		}
-	// 		j++;
-	// 	}
-	// 	i++;
-	// }
 	return (0);
 }

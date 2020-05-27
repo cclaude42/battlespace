@@ -18,5 +18,4 @@ TOT=$(( TOT/100 ))
 echo $TOT
 
 rm btsp
-
 cd cclaude

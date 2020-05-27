@@ -6,11 +6,49 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/05/27 13:18:07 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/05/27 15:02:24 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "btsp.h"
+
+// DEBUGGING
+
+void	print_map(char map[10][10])
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+			printf("%c", map[i][j++]);
+		printf("\n");
+		i++;
+	}
+	printf("\n");
+}
+
+void	print_pdf(int pdf[10][10])
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+			printf("%2.2d ", pdf[i][j++]);
+		printf("\n");
+		i++;
+	}
+	printf("\n");
+}
+
+// TOOLS
 
 int	ft_abs(int n)
 {
@@ -36,6 +74,63 @@ int	ft_strcmp(const char *s1, const char *s2)
 	}
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
+
+// FUNCTIONS
+
+int		shoot(int i, int j)
+{
+	int		idx;
+	char	in[10];
+	char	out[4];
+
+	out[0] = 65 + i;
+	out[1] = 48 + j;
+	out[2] = '\n';
+	out[3] = '\0';
+	write(1, &out, 3);
+	read(0, &in, 10);
+	idx = 0;
+	while (in[idx] != '\n')
+		idx++;
+	in[idx] = '\0';
+	if (ft_strcmp(in, "BLOCKED") == 0)
+		return (BLOCKED);
+	else if (ft_strcmp(in, "SUNK") == 0)
+		return (SUNK);
+	else if (ft_strcmp(in, "HIT") == 0)
+		return (HIT);
+	else
+		return (MISS);
+}
+
+void	shield_checker(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
+{
+	int	x;
+	int	y;
+
+	(*map)[i][j] = 'x';
+	(*pdf)[i][j] = 0;
+	x = 0;
+	while (x < 10)
+	{
+		y = 0;
+		while (y < 10)
+		{
+			if ((*map)[x][y] == 'b')
+			{
+				print_map(*map);
+				if (shoot(x, y) == BLOCKED)
+					return ;
+				(*map)[x][y] = 'x';
+				(*pdf)[x][y] = 0;
+			}
+			y++;
+		}
+		x++;
+	}
+}
+
+// MAIN
 
 int	main(void)
 {
@@ -96,28 +191,8 @@ int	main(void)
 	}
 
 	// PRINT RESULTS
-
-	// i = 0;
-	// while (i < 10)
-	// {
-	// 	j = 0;
-	// 	while (j < 10)
-	// 		printf("%2.2d ", pdf[i][j++]);
-	// 	printf("\n");
-	// 	i++;
-	// }
-	// printf("\n");
-	//
-	// i = 0;
-	// while (i < 10)
-	// {
-	// 	j = 0;
-	// 	while (j < 10)
-	// 		printf("%c", map[i][j++]);
-	// 	printf("\n");
-	// 	i++;
-	// }
-	// printf("\n");
+	print_map(map);
+	// print_pdf(pdf);
 
 	// (find target)
 	i = 0;
@@ -148,26 +223,12 @@ int	main(void)
 	idx = 0;
 	while (in[idx] != '\n')
 		idx++;
+	// write(2, in, idx+1);
 	in[idx] = '\0';
 	if (ft_strcmp(in, "BLOCKED") == 0)
 		map[i][j] = 'b';
 	else if (ft_strcmp(in, "SUNK") == 0)
-	{
-		map[i][j] = 'x';
-		pdf[i][j] = 0;
-		i = 0;
-		while (i < 10)
-		{
-			j = 0;
-			while (j < 10)
-			{
-				if (map[i][j] == 'b')
-					map[i][j] = '.';
-				j++;
-			}
-			i++;
-		}
-	}
+		shield_checker(&map, &pdf, i, j);
 	else
 	{
 		map[i][j] = 'x';

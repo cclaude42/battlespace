@@ -18,6 +18,4 @@ TOT=$(( TOT/1000 ))
 echo $TOT
 
 rm btsp
-rm map
-
 cd cclaude

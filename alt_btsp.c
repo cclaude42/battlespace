@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   btsp.c                                             :+:      :+:    :+:   */
+/*   alt_btsp.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/05/28 11:59:58 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/05/28 12:02:35 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,25 +189,29 @@ void	fill_map(char (*map)[10][10])
 
 int		compute_coeff(char map[10][10], int i, int j)
 {
-	int	n;
+	int		n;
+	char	c;
 
+	if ((c = map[i][j]) == 'b')
+		map[i][j] = '.';
 	n = 9 - ft_abs((float)i - 4.5) - ft_abs((float)j - 4.5);
-	if (map[i][j] != 'x' && j > 0 && map[i][j - 1] != 'x')
+	if (j > 0 && map[i][j - 1] == '.')
 		n += 12;
-	if (map[i][j] != 'x' && j < 9 && map[i][j + 1] != 'x')
+	if (j < 9 && map[i][j + 1] == '.')
 		n += 12;
-	if (map[i][j] != 'x' && i > 0 && map[i - 1][j] != 'x')
+	if (i > 0 && map[i - 1][j] == '.')
 		n += 12;
-	if (map[i][j] != 'x' && i < 9 && map[i + 1][j] != 'x')
+	if (i < 9 && map[i + 1][j] == '.')
 		n += 12;
-	if (map[i][j] != 'x' && i > 0 && j > 0 && map[i - 1][j - 1] != 'x')
+	if (i > 0 && j > 0 && map[i - 1][j - 1] == '.')
 		n += 8;
-	if (map[i][j] != 'x' && i > 0 && j < 9 && map[i - 1][j + 1] != 'x')
+	if (i > 0 && j < 9 && map[i - 1][j + 1] == '.')
 		n += 8;
-	if (map[i][j] != 'x' && i < 9 && j > 0 && map[i + 1][j - 1] != 'x')
+	if (i < 9 && j > 0 && map[i + 1][j - 1] == '.')
 		n += 8;
-	if (map[i][j] != 'x' && i < 9 && j < 9 && map[i + 1][j + 1] != 'x')
+	if (i < 9 && j < 9 && map[i + 1][j + 1] == '.')
 		n += 8;
+	map[i][j] = c;
 	return (n);
 }
 
@@ -240,9 +244,14 @@ void	react(char (*map)[10][10], int (*pdf)[10][10], int ij, int hit)
 		(*map)[i][j] = 'b';
 	else if (hit == SUNK)
 		clear_blocked(map, pdf, i, j);
-	else
+	else if (hit == HIT)
 	{
 		(*map)[i][j] = 'x';
+		(*pdf)[i][j] = 0;
+	}
+	else
+	{
+		(*map)[i][j] = ' ';
 		(*pdf)[i][j] = 0;
 	}
 }

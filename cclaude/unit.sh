@@ -1,7 +1,10 @@
 #!/bin/bash
+make re
 cp btsp ..
+
 cd ..
 
+mkdir maps
 gcc -o battlespace battlespace.c
 
 TOT=0
@@ -18,4 +21,5 @@ TOT=$(( TOT/100 ))
 echo $TOT
 
 rm btsp
+
 cd cclaude

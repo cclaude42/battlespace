@@ -1,5 +1,7 @@
 #!/bin/bash
+make re
 cp btsp ..
+
 cd ..
 
 gcc -o battlespace battlespace.c
@@ -18,4 +20,5 @@ TOT=$(( TOT/1000 ))
 echo $TOT
 
 rm btsp
+
 cd cclaude

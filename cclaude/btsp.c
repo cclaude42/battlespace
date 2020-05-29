@@ -6,11 +6,13 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/05/29 11:33:17 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/05/29 16:00:32 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "btsp.h"
+
+int		sink_boat(char (*map)[10][10], int (*pdf)[10][10], int i, int j);
 
 // DEBUGGING
 
@@ -41,11 +43,11 @@ void	print_pdf(int pdf[10][10])
 	{
 		j = 0;
 		while (j < 10)
-			printf("%2.2d ", pdf[i][j++]);
-		printf("\n");
+			fprintf(stderr, "%2.2d ", pdf[i][j++]);
+		fprintf(stderr, "\n");
 		i++;
 	}
-	printf("\n");
+	fprintf(stderr, "\n");
 }
 
 // TOOLS
@@ -106,7 +108,7 @@ int		shoot(int i, int j)
 	while (in[idx] != '\n')
 		idx++;
 	in[idx] = '\0';
-	fprintf(stderr, "\n%s\n%s\n", out, in);
+	// fprintf(stderr, "\n%s\n%s\n", out, in);
 	if (ft_strcmp(in, "BLOCKED") == 0)
 		return (BLOCKED);
 	else if (ft_strcmp(in, "SUNK") == 0)
@@ -210,6 +212,54 @@ int		got_shield(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 	(*map)[i][j] = ' ';
 	(*pdf)[i][j] = 0;
 	return (1);
+}
+
+int		try_sinking(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
+{
+	int	ret;
+
+	if (i < 0 || i > 9 || j < 0 || j > 9 || (*map)[i][j] != '.')
+		return (MISS);
+	// print_map(*map);
+	ret = shoot(i, j);
+	if (ret == SUNK)
+		mark_sunk(map, pdf, i, j);
+	else if (ret == HIT)
+		sink_boat(map, pdf, i, j);
+	else if (ret == BLOCKED)
+	{
+		(*map)[i][j] = 'b';
+		(*pdf)[i][j] = 0;
+	}
+	else if (ret == MISS)
+	{
+		(*map)[i][j] = ' ';
+		(*pdf)[i][j] = 0;
+	}
+	return (ret);
+}
+
+int		sink_boat(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
+{
+	(*map)[i][j] = 'x';
+	(*pdf)[i][j] = 0;
+	if (try_sinking(map, pdf, i, j - 1) > HIT)
+		return (1);
+	if (try_sinking(map, pdf, i, j + 1) > HIT)
+		return (1);
+	if (try_sinking(map, pdf, i - 1, j) > HIT)
+		return (1);
+	if (try_sinking(map, pdf, i + 1, j) > HIT)
+		return (1);
+	if (try_sinking(map, pdf, i + 1, j + 1) > HIT)
+		return (1);
+	if (try_sinking(map, pdf, i - 1, j + 1) > HIT)
+		return (1);
+	if (try_sinking(map, pdf, i + 1, j - 1) > HIT)
+		return (1);
+	if (try_sinking(map, pdf, i - 1, j - 1) > HIT)
+		return (1);
+	return (0);
 }
 
 int		find_max(char map[10][10], int pdf[10][10])
@@ -331,10 +381,7 @@ void	react(char (*map)[10][10], int (*pdf)[10][10], int ij, int hit)
 			mark_sunk(map, pdf, i, j);
 	}
 	else if (hit == HIT)
-	{
-		(*map)[i][j] = 'x';
-		(*pdf)[i][j] = 0;
-	}
+		sink_boat(map, pdf, i, j);
 	else
 	{
 		(*map)[i][j] = ' ';
@@ -355,7 +402,7 @@ int		main(void)
 	while (1)
 	{
 		map_coeff(map, &pdf);
-		print_map(map);
+		// print_map(map);
 		// print_pdf(pdf);
 		find_target(map, pdf, &i, &j);
 		if (i == 10 || j == 10)

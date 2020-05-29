@@ -6,7 +6,7 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/05/29 16:23:05 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/05/30 00:06:33 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	print_map(char map[10][10], char *in, char *out)
 		fprintf(stderr, "\n");
 		i++;
 	}
-	fprintf(stderr, "\n");
+	fprintf(stderr, "\n\n%s\n%s\n", out, in);
 }
 
 void	print_pdf(int pdf[10][10])
@@ -111,7 +111,7 @@ int		shoot(int i, int j)
 	while (in[idx] != '\n')
 		idx++;
 	in[idx] = '\0';
-	// print_map(map);
+	// print_map(map, in, out);
 	if (ft_strcmp(in, "BLOCKED") == 0)
 		return (BLOCKED);
 	else if (ft_strcmp(in, "SUNK") == 0)
@@ -122,23 +122,31 @@ int		shoot(int i, int j)
 		return (MISS);
 }
 
+int		check_spot(char *marks, char (*map)[10][10], int i, int j)
+{
+	if (i < 0 || i > 9 || j < 0 || j > 9)
+		return (0);
+	else
+		return (ft_strchr(marks, (*map)[i][j]));
+}
+
 void	clear_sides(char (*map)[10][10], int i, int j)
 {
-	if (j > 0 && (*map)[i][j - 1] == '.')
+	if (check_spot(".", map, i, j - 1))
 		(*map)[i][j - 1] = ' ';
-	if (j < 9 && (*map)[i][j + 1] == '.')
+	if (check_spot(".", map, i, j + 1))
 		(*map)[i][j + 1] = ' ';
-	if (i > 0 && (*map)[i - 1][j] == '.')
+	if (check_spot(".", map, i - 1, j))
 		(*map)[i - 1][j] = ' ';
-	if (i < 9 && (*map)[i + 1][j] == '.')
+	if (check_spot(".", map, i + 1, j))
 		(*map)[i + 1][j] = ' ';
-	if (i > 0 && j > 0 && (*map)[i - 1][j - 1] == '.')
+	if (check_spot(".", map, i - 1, j - 1))
 		(*map)[i - 1][j - 1] = ' ';
-	if (i > 0 && j < 9 && (*map)[i - 1][j + 1] == '.')
+	if (check_spot(".", map, i - 1, j + 1))
 		(*map)[i - 1][j + 1] = ' ';
-	if (i < 9 && j > 0 && (*map)[i + 1][j - 1] == '.')
+	if (check_spot(".", map, i + 1, j - 1))
 		(*map)[i + 1][j - 1] = ' ';
-	if (i < 9 && j < 9 && (*map)[i + 1][j + 1] == '.')
+	if (check_spot(".", map, i + 1, j + 1))
 		(*map)[i + 1][j + 1] = ' ';
 }
 
@@ -146,21 +154,21 @@ void	mark_sunk(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 {
 	(*map)[i][j] = 'o';
 	(*pdf)[i][j] = 0;
-	if (j > 0 && (*map)[i][j - 1] == 'x')
+	if (check_spot("x", map, i, j - 1))
 		mark_sunk(map, pdf, i, j - 1);
-	if (j < 9 && (*map)[i][j + 1] == 'x')
+	if (check_spot("x", map, i, j + 1))
 		mark_sunk(map, pdf, i, j + 1);
-	if (i > 0 && (*map)[i - 1][j] == 'x')
+	if (check_spot("x", map, i - 1, j))
 		mark_sunk(map, pdf, i - 1, j);
-	if (i < 9 && (*map)[i + 1][j] == 'x')
+	if (check_spot("x", map, i + 1, j))
 		mark_sunk(map, pdf, i + 1, j);
-	if (i > 0 && j > 0 && (*map)[i - 1][j - 1] == 'x')
+	if (check_spot("x", map, i - 1, j - 1))
 		mark_sunk(map, pdf, i - 1, j - 1);
-	if (i > 0 && j < 9 && (*map)[i - 1][j + 1] == 'x')
+	if (check_spot("x", map, i - 1, j + 1))
 		mark_sunk(map, pdf, i - 1, j + 1);
-	if (i < 9 && j > 0 && (*map)[i + 1][j - 1] == 'x')
+	if (check_spot("x", map, i + 1, j - 1))
 		mark_sunk(map, pdf, i + 1, j - 1);
-	if (i < 9 && j < 9 && (*map)[i + 1][j + 1] == 'x')
+	if (check_spot("x", map, i + 1, j + 1))
 		mark_sunk(map, pdf, i + 1, j + 1);
 	clear_sides(map, i, j);
 }
@@ -195,25 +203,71 @@ void	clear_blocked(char (*map)[10][10], int (*pdf)[10][10])
 
 int		got_shield(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 {
-	if (j > 0 && (*map)[i][j - 1] == 'x')
+	if (check_spot("x", map, i, j - 1))
 		return (0);
-	if (j < 9 && (*map)[i][j + 1] == 'x')
+	if (check_spot("x", map, i, j + 1))
 		return (0);
-	if (i > 0 && (*map)[i - 1][j] == 'x')
+	if (check_spot("x", map, i - 1, j))
 		return (0);
-	if (i < 9 && (*map)[i + 1][j] == 'x')
+	if (check_spot("x", map, i + 1, j))
 		return (0);
-	if (i > 0 && j > 0 && (*map)[i - 1][j - 1] == 'x')
+	if (check_spot("x", map, i - 1, j - 1))
 		return (0);
-	if (i > 0 && j < 9 && (*map)[i - 1][j + 1] == 'x')
+	if (check_spot("x", map, i - 1, j + 1))
 		return (0);
-	if (i < 9 && j > 0 && (*map)[i + 1][j - 1] == 'x')
+	if (check_spot("x", map, i + 1, j - 1))
 		return (0);
-	if (i < 9 && j < 9 && (*map)[i + 1][j + 1] == 'x')
+	if (check_spot("x", map, i + 1, j + 1))
 		return (0);
 	(*map)[i][j] = ' ';
 	(*pdf)[i][j] = 0;
 	return (1);
+}
+
+int		orientation_spot(char (*map)[10][10], int i, int j)
+{
+	int	or;
+
+	or = 0;
+	if (check_spot("box", map, i, j - 1))
+		or++;
+	if (check_spot("box", map, i, j + 1))
+		or++;
+	if (check_spot("box", map, i - 1, j))
+		or++;
+	if (check_spot("box", map, i + 1, j))
+		or++;
+	if (check_spot("box", map, i - 1, j - 1))
+		or--;
+	if (check_spot("box", map, i - 1, j + 1))
+		or--;
+	if (check_spot("box", map, i + 1, j - 1))
+		or--;
+	if (check_spot("box", map, i + 1, j + 1))
+		or--;
+	return (or);
+}
+
+int		orientation(char (*map)[10][10])
+{
+	int	i;
+	int	j;
+	int	or;
+
+	or = 0;
+	i = 0;
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+		{
+			if (check_spot("box", map, i, j))
+				or += orientation_spot(map, i, j);
+			j++;
+		}
+		i++;
+	}
+	return (or);
 }
 
 int		sink_spot(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
@@ -242,6 +296,14 @@ int		sink_spot(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 
 int		sink_plus(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 {
+	if (check_spot("box", map, i, j + 1) && sink_spot(map, pdf, i, j - 1) > HIT)
+		return (1);
+	if (check_spot("box", map, i, j - 1) && sink_spot(map, pdf, i, j + 1) > HIT)
+		return (1);
+	if (check_spot("box", map, i + 1, j) && sink_spot(map, pdf, i - 1, j) > HIT)
+		return (1);
+	if (check_spot("box", map, i - 1, j) && sink_spot(map, pdf, i + 1, j) > HIT)
+		return (1);
 	if (sink_spot(map, pdf, i, j - 1) > HIT)
 		return (1);
 	if (sink_spot(map, pdf, i, j + 1) > HIT)
@@ -255,6 +317,18 @@ int		sink_plus(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 
 int		sink_cross(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 {
+	if (check_spot("box", map, i - 1, j - 1)
+		&& sink_spot(map, pdf, i + 1, j + 1) > HIT)
+		return (1);
+	if (check_spot("box", map, i + 1, j - 1)
+		&& sink_spot(map, pdf, i - 1, j + 1) > HIT)
+		return (1);
+	if (check_spot("box", map, i - 1, j + 1)
+		&& sink_spot(map, pdf, i + 1, j - 1) > HIT)
+		return (1);
+	if (check_spot("box", map, i + 1, j + 1)
+		&& sink_spot(map, pdf, i - 1, j - 1) > HIT)
+		return (1);
 	if (sink_spot(map, pdf, i + 1, j + 1) > HIT)
 		return (1);
 	if (sink_spot(map, pdf, i - 1, j + 1) > HIT)
@@ -270,10 +344,20 @@ int		sink_boat(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 {
 	(*map)[i][j] = 'x';
 	(*pdf)[i][j] = 0;
-	if (sink_plus(map, pdf, i, j))
-		return (1);
-	if (sink_cross(map, pdf, i, j))
-		return (1);
+	if (orientation(map) >= 0)
+	{
+		if (sink_plus(map, pdf, i, j))
+			return (1);
+		if (sink_cross(map, pdf, i, j))
+			return (1);
+	}
+	else
+	{
+		if (sink_cross(map, pdf, i, j))
+			return (1);
+		if (sink_plus(map, pdf, i, j))
+			return (1);
+	}
 	return (0);
 }
 
@@ -335,33 +419,33 @@ void	fill_map(char (*map)[10][10])
 	}
 }
 
-int		compute_coeff(char map[10][10], int i, int j)
+int		compute_coeff(char (*map)[10][10], int i, int j)
 {
 	int	n;
 
-	if (ft_strchr("b.", map[i][j]) == 0)
+	if (check_spot("b.", map, i, j) == 0)
 		return (0);
 	n = 9 - ft_abs((float)i - 4.5) - ft_abs((float)j - 4.5);
-	if (j > 0 && ft_strchr("b.", map[i][j - 1]))
+	if (check_spot("b.", map, i, j - 1))
 		n += 12;
-	if (j < 9 && ft_strchr("b.", map[i][j + 1]))
+	if (check_spot("b.", map, i, j + 1))
 		n += 12;
-	if (i > 0 && ft_strchr("b.", map[i - 1][j]))
+	if (check_spot("b.", map, i - 1, j))
 		n += 12;
-	if (i < 9 && ft_strchr("b.", map[i + 1][j]))
+	if (check_spot("b.", map, i + 1, j))
 		n += 12;
-	if (i > 0 && j > 0 && ft_strchr("b.", map[i - 1][j - 1]))
+	if (check_spot("b.", map, i - 1, j - 1))
 		n += 8;
-	if (i > 0 && j < 9 && ft_strchr("b.", map[i - 1][j + 1]))
+	if (check_spot("b.", map, i - 1, j + 1))
 		n += 8;
-	if (i < 9 && j > 0 && ft_strchr("b.", map[i + 1][j - 1]))
+	if (check_spot("b.", map, i + 1, j - 1))
 		n += 8;
-	if (i < 9 && j < 9 && ft_strchr("b.", map[i + 1][j + 1]))
+	if (check_spot("b.", map, i + 1, j + 1))
 		n += 8;
 	return (n);
 }
 
-void	map_coeff(char map[10][10], int (*pdf)[10][10])
+void	map_coeff(char (*map)[10][10], int (*pdf)[10][10])
 {
 	int	i;
 	int	j;
@@ -415,7 +499,7 @@ int		main(void)
 	fill_map(&map);
 	while (1)
 	{
-		map_coeff(map, &pdf);
+		map_coeff(&map, &pdf);
 		find_target(map, pdf, &i, &j);
 		if (i == 10 || j == 10)
 			return (0);

@@ -6,7 +6,7 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/05/28 13:01:37 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/05/29 11:33:17 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,20 @@ int		ft_abs(int n)
 		return (n);
 }
 
+int	ft_strchr(const char *s, int c)
+{
+	int	i;
+
+	i = 0;
+	while (s[i] != c)
+	{
+		if (s[i] == '\0')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int		ft_strcmp(const char *s1, const char *s2)
 {
 	size_t	i;
@@ -92,7 +106,7 @@ int		shoot(int i, int j)
 	while (in[idx] != '\n')
 		idx++;
 	in[idx] = '\0';
-	// fprintf(stderr, "\n%s\n%s\n", out, in);
+	fprintf(stderr, "\n%s\n%s\n", out, in);
 	if (ft_strcmp(in, "BLOCKED") == 0)
 		return (BLOCKED);
 	else if (ft_strcmp(in, "SUNK") == 0)
@@ -150,6 +164,7 @@ void	clear_blocked(char (*map)[10][10], int (*pdf)[10][10])
 {
 	int	i;
 	int	j;
+	int	ret;
 
 	i = 0;
 	while (i < 10)
@@ -160,10 +175,13 @@ void	clear_blocked(char (*map)[10][10], int (*pdf)[10][10])
 			if ((*map)[i][j] == 'b')
 			{
 				// print_map(*map);
-				if (shoot(i, j) == BLOCKED)
+				ret = shoot(i, j);
+				if (ret == BLOCKED)
 					return ;
 				(*map)[i][j] = 'x';
 				(*pdf)[i][j] = 0;
+				if (ret == SUNK)
+					mark_sunk(map, pdf, i, j);
 			}
 			j++;
 		}
@@ -252,36 +270,28 @@ void	fill_map(char (*map)[10][10])
 	}
 }
 
-int		spot_check(char c)
-{
-	if (c == '.' || c == 'b')
-		return (1);
-	else
-		return (0);
-}
-
 int		compute_coeff(char map[10][10], int i, int j)
 {
 	int	n;
 
-	if (spot_check(map[i][j]) == 0)
+	if (ft_strchr("b.", map[i][j]) == 0)
 		return (0);
 	n = 9 - ft_abs((float)i - 4.5) - ft_abs((float)j - 4.5);
-	if (j > 0 && spot_check(map[i][j - 1]))
+	if (j > 0 && ft_strchr("b.", map[i][j - 1]))
 		n += 12;
-	if (j < 9 && spot_check(map[i][j + 1]))
+	if (j < 9 && ft_strchr("b.", map[i][j + 1]))
 		n += 12;
-	if (i > 0 && spot_check(map[i - 1][j]))
+	if (i > 0 && ft_strchr("b.", map[i - 1][j]))
 		n += 12;
-	if (i < 9 && spot_check(map[i + 1][j]))
+	if (i < 9 && ft_strchr("b.", map[i + 1][j]))
 		n += 12;
-	if (i > 0 && j > 0 && spot_check(map[i - 1][j - 1]))
+	if (i > 0 && j > 0 && ft_strchr("b.", map[i - 1][j - 1]))
 		n += 8;
-	if (i > 0 && j < 9 && spot_check(map[i - 1][j + 1]))
+	if (i > 0 && j < 9 && ft_strchr("b.", map[i - 1][j + 1]))
 		n += 8;
-	if (i < 9 && j > 0 && spot_check(map[i + 1][j - 1]))
+	if (i < 9 && j > 0 && ft_strchr("b.", map[i + 1][j - 1]))
 		n += 8;
-	if (i < 9 && j < 9 && spot_check(map[i + 1][j + 1]))
+	if (i < 9 && j < 9 && ft_strchr("b.", map[i + 1][j + 1]))
 		n += 8;
 	return (n);
 }
@@ -345,7 +355,7 @@ int		main(void)
 	while (1)
 	{
 		map_coeff(map, &pdf);
-		// print_map(map);
+		print_map(map);
 		// print_pdf(pdf);
 		find_target(map, pdf, &i, &j);
 		if (i == 10 || j == 10)

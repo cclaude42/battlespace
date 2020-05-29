@@ -1,7 +1,5 @@
 battlespace
 btsp
 map
-maps/*
 cclaude/btsp
 cclaude/*.o
-cclaude/brute.txt

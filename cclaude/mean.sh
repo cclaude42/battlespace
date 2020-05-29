@@ -16,8 +16,8 @@ do
 done
 echo
 
-TOT=$(( TOT/1000 ))
 echo $TOT
+echo $(( TOT/1000 ))
 
 rm btsp
 

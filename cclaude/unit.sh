@@ -4,7 +4,6 @@ cp btsp ..
 
 cd ..
 
-mkdir maps
 gcc -o battlespace battlespace.c
 
 TOT=0
@@ -16,7 +15,6 @@ do
 done
 echo
 
-TOT=$(( TOT ))
 echo $TOT
 
 rm btsp

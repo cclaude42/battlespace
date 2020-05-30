@@ -6,7 +6,7 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/05/30 00:06:33 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/05/30 15:21:14 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	print_map(char map[10][10], char *in, char *out)
 	int	j;
 
 	i = 0;
-	fprintf(stderr, "\n%s\n%s\n", out, in);
 	while (i < 10)
 	{
 		j = 0;
@@ -33,6 +32,7 @@ void	print_map(char map[10][10], char *in, char *out)
 		fprintf(stderr, "\n");
 		i++;
 	}
+	usleep(1000000);
 	fprintf(stderr, "\n\n%s\n%s\n", out, in);
 }
 
@@ -190,10 +190,10 @@ void	clear_blocked(char (*map)[10][10], int (*pdf)[10][10])
 				ret = shoot(i, j);
 				if (ret == BLOCKED)
 					return ;
-				(*map)[i][j] = 'x';
-				(*pdf)[i][j] = 0;
-				if (ret == SUNK)
+				else if (ret == SUNK)
 					mark_sunk(map, pdf, i, j);
+				else
+					sink_boat(map, pdf, i, j);
 			}
 			j++;
 		}
@@ -426,22 +426,18 @@ int		compute_coeff(char (*map)[10][10], int i, int j)
 	if (check_spot("b.", map, i, j) == 0)
 		return (0);
 	n = 9 - ft_abs((float)i - 4.5) - ft_abs((float)j - 4.5);
-	if (check_spot("b.", map, i, j - 1))
-		n += 12;
-	if (check_spot("b.", map, i, j + 1))
-		n += 12;
-	if (check_spot("b.", map, i - 1, j))
-		n += 12;
-	if (check_spot("b.", map, i + 1, j))
-		n += 12;
-	if (check_spot("b.", map, i - 1, j - 1))
-		n += 8;
-	if (check_spot("b.", map, i - 1, j + 1))
-		n += 8;
-	if (check_spot("b.", map, i + 1, j - 1))
-		n += 8;
-	if (check_spot("b.", map, i + 1, j + 1))
-		n += 8;
+	n += (check_spot("b.", map, i, j - 1)) ? 3 : 0;
+	n += (check_spot("b.", map, i, j + 1)) ? 3 : 0;
+	n += (check_spot("b.", map, i - 1, j)) ? 3 : 0;
+	n += (check_spot("b.", map, i + 1, j)) ? 3 : 0;
+	n += (check_spot("b.", map, i - 1, j - 1)) ? 2 : 0;
+	n += (check_spot("b.", map, i - 1, j + 1)) ? 2 : 0;
+	n += (check_spot("b.", map, i + 1, j - 1)) ? 2 : 0;
+	n += (check_spot("b.", map, i + 1, j + 1)) ? 2 : 0;
+	n += (check_spot("b.", map, i, j - 2)) ? 1 : 0;
+	n += (check_spot("b.", map, i, j + 2)) ? 1 : 0;
+	n += (check_spot("b.", map, i - 2, j)) ? 1 : 0;
+	n += (check_spot("b.", map, i + 2, j)) ? 1 : 0;
 	return (n);
 }
 

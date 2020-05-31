@@ -12,7 +12,12 @@ do
 	./map_gen.py > map
 	OUT=$(./battlespace map btsp)
 	TOT=$(( TOT+OUT ))
-	echo -n .
+	if (( OUT > 99 ))
+	then
+		echo -n x
+	else
+		echo -n .
+	fi
 done
 echo
 

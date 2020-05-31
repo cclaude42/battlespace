@@ -6,13 +6,15 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/05/30 15:21:14 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/05/31 12:42:19 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "btsp.h"
 
-int		sink_boat(char (*map)[10][10], int (*pdf)[10][10], int i, int j);
+int		sink_boat(char (*map)[10][10], int i, int j);
+int		sink_plus(char (*map)[10][10], int i, int j);
+int		sink_cross(char (*map)[10][10], int i, int j);
 
 char	map[10][10];
 
@@ -150,30 +152,29 @@ void	clear_sides(char (*map)[10][10], int i, int j)
 		(*map)[i + 1][j + 1] = ' ';
 }
 
-void	mark_sunk(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
+void	mark_sunk(char (*map)[10][10], int i, int j)
 {
 	(*map)[i][j] = 'o';
-	(*pdf)[i][j] = 0;
 	if (check_spot("x", map, i, j - 1))
-		mark_sunk(map, pdf, i, j - 1);
+		mark_sunk(map, i, j - 1);
 	if (check_spot("x", map, i, j + 1))
-		mark_sunk(map, pdf, i, j + 1);
+		mark_sunk(map, i, j + 1);
 	if (check_spot("x", map, i - 1, j))
-		mark_sunk(map, pdf, i - 1, j);
+		mark_sunk(map, i - 1, j);
 	if (check_spot("x", map, i + 1, j))
-		mark_sunk(map, pdf, i + 1, j);
+		mark_sunk(map, i + 1, j);
 	if (check_spot("x", map, i - 1, j - 1))
-		mark_sunk(map, pdf, i - 1, j - 1);
+		mark_sunk(map, i - 1, j - 1);
 	if (check_spot("x", map, i - 1, j + 1))
-		mark_sunk(map, pdf, i - 1, j + 1);
+		mark_sunk(map, i - 1, j + 1);
 	if (check_spot("x", map, i + 1, j - 1))
-		mark_sunk(map, pdf, i + 1, j - 1);
+		mark_sunk(map, i + 1, j - 1);
 	if (check_spot("x", map, i + 1, j + 1))
-		mark_sunk(map, pdf, i + 1, j + 1);
+		mark_sunk(map, i + 1, j + 1);
 	clear_sides(map, i, j);
 }
 
-void	clear_blocked(char (*map)[10][10], int (*pdf)[10][10])
+void	clear_blocked(char (*map)[10][10])
 {
 	int	i;
 	int	j;
@@ -191,9 +192,9 @@ void	clear_blocked(char (*map)[10][10], int (*pdf)[10][10])
 				if (ret == BLOCKED)
 					return ;
 				else if (ret == SUNK)
-					mark_sunk(map, pdf, i, j);
+					mark_sunk(map, i, j);
 				else
-					sink_boat(map, pdf, i, j);
+					sink_boat(map, i, j);
 			}
 			j++;
 		}
@@ -201,7 +202,7 @@ void	clear_blocked(char (*map)[10][10], int (*pdf)[10][10])
 	}
 }
 
-int		got_shield(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
+int		got_shield(char (*map)[10][10], int i, int j)
 {
 	if (check_spot("x", map, i, j - 1))
 		return (0);
@@ -220,7 +221,6 @@ int		got_shield(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 	if (check_spot("x", map, i + 1, j + 1))
 		return (0);
 	(*map)[i][j] = ' ';
-	(*pdf)[i][j] = 0;
 	return (1);
 }
 
@@ -270,7 +270,7 @@ int		orientation(char (*map)[10][10])
 	return (or);
 }
 
-int		sink_spot(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
+int		sink_spot(char (*map)[10][10], int i, int j, int plus)
 {
 	int	ret;
 
@@ -278,84 +278,87 @@ int		sink_spot(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
 		return (MISS);
 	ret = shoot(i, j);
 	if (ret == SUNK)
-		mark_sunk(map, pdf, i, j);
+		mark_sunk(map, i, j);
 	else if (ret == HIT)
-		sink_boat(map, pdf, i, j);
+	{
+		sink_boat(map, i, j);
+		(void)plus;
+		
+		// if (plus)
+		// 	sink_plus(map, i, j);
+		// else
+		// 	sink_cross(map, i, j);
+	}
 	else if (ret == BLOCKED)
-	{
 		(*map)[i][j] = 'b';
-		(*pdf)[i][j] = 0;
-	}
 	else if (ret == MISS)
-	{
 		(*map)[i][j] = ' ';
-		(*pdf)[i][j] = 0;
-	}
 	return (ret);
 }
 
-int		sink_plus(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
-{
-	if (check_spot("box", map, i, j + 1) && sink_spot(map, pdf, i, j - 1) > HIT)
-		return (1);
-	if (check_spot("box", map, i, j - 1) && sink_spot(map, pdf, i, j + 1) > HIT)
-		return (1);
-	if (check_spot("box", map, i + 1, j) && sink_spot(map, pdf, i - 1, j) > HIT)
-		return (1);
-	if (check_spot("box", map, i - 1, j) && sink_spot(map, pdf, i + 1, j) > HIT)
-		return (1);
-	if (sink_spot(map, pdf, i, j - 1) > HIT)
-		return (1);
-	if (sink_spot(map, pdf, i, j + 1) > HIT)
-		return (1);
-	if (sink_spot(map, pdf, i - 1, j) > HIT)
-		return (1);
-	if (sink_spot(map, pdf, i + 1, j) > HIT)
-		return (1);
-	return (0);
-}
-
-int		sink_cross(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
-{
-	if (check_spot("box", map, i - 1, j - 1)
-		&& sink_spot(map, pdf, i + 1, j + 1) > HIT)
-		return (1);
-	if (check_spot("box", map, i + 1, j - 1)
-		&& sink_spot(map, pdf, i - 1, j + 1) > HIT)
-		return (1);
-	if (check_spot("box", map, i - 1, j + 1)
-		&& sink_spot(map, pdf, i + 1, j - 1) > HIT)
-		return (1);
-	if (check_spot("box", map, i + 1, j + 1)
-		&& sink_spot(map, pdf, i - 1, j - 1) > HIT)
-		return (1);
-	if (sink_spot(map, pdf, i + 1, j + 1) > HIT)
-		return (1);
-	if (sink_spot(map, pdf, i - 1, j + 1) > HIT)
-		return (1);
-	if (sink_spot(map, pdf, i + 1, j - 1) > HIT)
-		return (1);
-	if (sink_spot(map, pdf, i - 1, j - 1) > HIT)
-		return (1);
-	return (0);
-}
-
-int		sink_boat(char (*map)[10][10], int (*pdf)[10][10], int i, int j)
+int		sink_plus(char (*map)[10][10], int i, int j)
 {
 	(*map)[i][j] = 'x';
-	(*pdf)[i][j] = 0;
+	if (check_spot("box", map, i, j + 1) && sink_spot(map, i, j - 1, 1) > HIT)
+		return (1);
+	if (check_spot("box", map, i, j - 1) && sink_spot(map, i, j + 1, 1) > HIT)
+		return (1);
+	if (check_spot("box", map, i + 1, j) && sink_spot(map, i - 1, j, 1) > HIT)
+		return (1);
+	if (check_spot("box", map, i - 1, j) && sink_spot(map, i + 1, j, 1) > HIT)
+		return (1);
+	if (sink_spot(map, i, j - 1, 1) > HIT)
+		return (1);
+	if (sink_spot(map, i, j + 1, 1) > HIT)
+		return (1);
+	if (sink_spot(map, i - 1, j, 1) > HIT)
+		return (1);
+	if (sink_spot(map, i + 1, j, 1) > HIT)
+		return (1);
+	return (0);
+}
+
+int		sink_cross(char (*map)[10][10], int i, int j)
+{
+	(*map)[i][j] = 'x';
+	if (check_spot("box", map, i - 1, j - 1)
+		&& sink_spot(map, i + 1, j + 1, 0) > HIT)
+		return (1);
+	if (check_spot("box", map, i + 1, j - 1)
+		&& sink_spot(map, i - 1, j + 1, 0) > HIT)
+		return (1);
+	if (check_spot("box", map, i - 1, j + 1)
+		&& sink_spot(map, i + 1, j - 1, 0) > HIT)
+		return (1);
+	if (check_spot("box", map, i + 1, j + 1)
+		&& sink_spot(map, i - 1, j - 1, 0) > HIT)
+		return (1);
+	if (sink_spot(map, i + 1, j + 1, 0) > HIT)
+		return (1);
+	if (sink_spot(map, i - 1, j + 1, 0) > HIT)
+		return (1);
+	if (sink_spot(map, i + 1, j - 1, 0) > HIT)
+		return (1);
+	if (sink_spot(map, i - 1, j - 1, 0) > HIT)
+		return (1);
+	return (0);
+}
+
+int		sink_boat(char (*map)[10][10], int i, int j)
+{
+	(*map)[i][j] = 'x';
 	if (orientation(map) >= 0)
 	{
-		if (sink_plus(map, pdf, i, j))
+		if (sink_plus(map, i, j))
 			return (1);
-		if (sink_cross(map, pdf, i, j))
+		if (sink_cross(map, i, j))
 			return (1);
 	}
 	else
 	{
-		if (sink_cross(map, pdf, i, j))
+		if (sink_cross(map, i, j))
 			return (1);
-		if (sink_plus(map, pdf, i, j))
+		if (sink_plus(map, i, j))
 			return (1);
 	}
 	return (0);
@@ -459,7 +462,7 @@ void	map_coeff(char (*map)[10][10], int (*pdf)[10][10])
 	}
 }
 
-void	react(char (*map)[10][10], int (*pdf)[10][10], int ij, int hit)
+void	react(char (*map)[10][10], int ij, int hit)
 {
 	int	i;
 	int	j;
@@ -470,18 +473,15 @@ void	react(char (*map)[10][10], int (*pdf)[10][10], int ij, int hit)
 		(*map)[i][j] = 'b';
 	else if (hit == SUNK)
 	{
-		if (got_shield(map, pdf, i, j))
-			clear_blocked(map, pdf);
+		if (got_shield(map, i, j))
+			clear_blocked(map);
 		else
-			mark_sunk(map, pdf, i, j);
+			mark_sunk(map, i, j);
 	}
 	else if (hit == HIT)
-		sink_boat(map, pdf, i, j);
+		sink_boat(map, i, j);
 	else
-	{
 		(*map)[i][j] = ' ';
-		(*pdf)[i][j] = 0;
-	}
 }
 
 // MAIN
@@ -499,7 +499,7 @@ int		main(void)
 		find_target(map, pdf, &i, &j);
 		if (i == 10 || j == 10)
 			return (0);
-		react(&map, &pdf, 10 * i + j, shoot(i, j));
+		react(&map, 10 * i + j, shoot(i, j));
 	}
 	return (0);
 }

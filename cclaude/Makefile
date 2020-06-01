@@ -1,12 +1,12 @@
 NAME = btsp
 
-CC = gcc
+CC = clang
 
 CFLAGS = -Wall -Wextra -Werror
 
 HEADER = btsp.h
 
-SRC = btsp.c
+SRC = btsp.c coeff.c map.c shield.c sink.c sunk.c tools.c
 
 OBJ = $(SRC:.c=.o)
 

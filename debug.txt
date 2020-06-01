@@ -1,0 +1,39 @@
+
+// DEBUGGING
+
+void	print_map(char map[10][10], char *in, char *out)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+			fprintf(stderr, "%c", map[i][j++]);
+		fprintf(stderr, "\n");
+		i++;
+	}
+	usleep(1000000);
+	fprintf(stderr, "\n\n%s\n%s\n", out, in);
+}
+
+void	print_pdf(int pdf[10][10])
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+			fprintf(stderr, "%2.2d ", pdf[i][j++]);
+		fprintf(stderr, "\n");
+		i++;
+	}
+	fprintf(stderr, "\n");
+}
+
+// FUNCTIONS

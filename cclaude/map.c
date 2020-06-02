@@ -6,13 +6,13 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/01 20:19:42 by cclaude           #+#    #+#             */
-/*   Updated: 2020/06/01 20:26:48 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/06/02 10:49:55 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "btsp.h"
 
-int		orientation_spot(char (*map)[10][10], int i, int j)
+int		orientation_spot(char map[10][10], int i, int j)
 {
 	int	or;
 
@@ -36,7 +36,7 @@ int		orientation_spot(char (*map)[10][10], int i, int j)
 	return (or);
 }
 
-int		orientation(char (*map)[10][10])
+int		orientation(char map[10][10])
 {
 	int	i;
 	int	j;
@@ -58,7 +58,7 @@ int		orientation(char (*map)[10][10])
 	return (or);
 }
 
-void	fill_map(char (*map)[10][10])
+void	fill_map(char map[10][10])
 {
 	int		i;
 	int		j;
@@ -68,7 +68,7 @@ void	fill_map(char (*map)[10][10])
 	{
 		j = 0;
 		while (j < 10)
-			(*map)[i][j++] = '.';
+			map[i][j++] = '.';
 		i++;
 	}
 }

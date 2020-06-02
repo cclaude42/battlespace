@@ -6,18 +6,18 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/06/01 20:34:37 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/06/02 10:49:55 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "btsp.h"
 
-int		check_spot(char *marks, char (*map)[10][10], int i, int j)
+int		check_spot(char *marks, char map[10][10], int i, int j)
 {
 	if (i < 0 || i > 9 || j < 0 || j > 9)
 		return (0);
 	else
-		return (ft_strchr(marks, (*map)[i][j]));
+		return (ft_strchr(marks, map[i][j]));
 }
 
 int		shoot(int i, int j)
@@ -46,7 +46,7 @@ int		shoot(int i, int j)
 		return (MISS);
 }
 
-void	react(char (*map)[10][10], int ij, int hit, int *shield)
+void	react(char map[10][10], int ij, int hit, int *shield)
 {
 	int	i;
 	int	j;
@@ -54,7 +54,7 @@ void	react(char (*map)[10][10], int ij, int hit, int *shield)
 	i = ij / 10;
 	j = ij % 10;
 	if (hit == BLOCKED)
-		(*map)[i][j] = 'b';
+		map[i][j] = 'b';
 	else if (hit == SUNK)
 	{
 		if (got_shield(map, i, j))
@@ -68,7 +68,7 @@ void	react(char (*map)[10][10], int ij, int hit, int *shield)
 	else if (hit == HIT)
 		sink_boat(map, i, j);
 	else
-		(*map)[i][j] = ' ';
+		map[i][j] = ' ';
 }
 
 int		main(void)
@@ -80,16 +80,16 @@ int		main(void)
 	int		shield;
 
 	shield = 1;
-	fill_map(&map);
+	fill_map(map);
 	while (1)
 	{
-		map_coeff(&map, &pdf);
-		if (shield && possible_shields(&map) < 8)
-			target_shield(&map, &pdf);
+		map_coeff(map, pdf);
+		if (shield && possible_shields(map) < 8)
+			target_shield(map, pdf);
 		find_target(map, pdf, &i, &j);
 		if (i == 10 || j == 10)
 			return (0);
-		react(&map, 10 * i + j, shoot(i, j), &shield);
+		react(map, 10 * i + j, shoot(i, j), &shield);
 	}
 	return (0);
 }

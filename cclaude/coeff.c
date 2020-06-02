@@ -6,7 +6,7 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/01 20:27:47 by cclaude           #+#    #+#             */
-/*   Updated: 2020/06/01 20:27:51 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/06/02 10:49:55 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	find_target(char map[10][10], int pdf[10][10], int *i, int *j)
 	}
 }
 
-int		compute_coeff(char (*map)[10][10], int i, int j)
+int		compute_coeff(char map[10][10], int i, int j)
 {
 	int	n;
 
@@ -77,7 +77,7 @@ int		compute_coeff(char (*map)[10][10], int i, int j)
 	return (n);
 }
 
-void	map_coeff(char (*map)[10][10], int (*pdf)[10][10])
+void	map_coeff(char map[10][10], int pdf[10][10])
 {
 	int	i;
 	int	j;
@@ -88,7 +88,7 @@ void	map_coeff(char (*map)[10][10], int (*pdf)[10][10])
 		j = 0;
 		while (j < 10)
 		{
-			(*pdf)[i][j] = compute_coeff(map, i, j);
+			pdf[i][j] = compute_coeff(map, i, j);
 			j++;
 		}
 		i++;

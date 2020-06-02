@@ -6,13 +6,13 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/01 20:15:02 by cclaude           #+#    #+#             */
-/*   Updated: 2020/06/01 20:34:18 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/06/02 10:49:55 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "btsp.h"
 
-int		spot_shield(char (*map)[10][10], int i, int j)
+int		spot_shield(char map[10][10], int i, int j)
 {
 	int	x;
 	int	y;
@@ -40,7 +40,7 @@ int		spot_shield(char (*map)[10][10], int i, int j)
 	return (1);
 }
 
-int		possible_shields(char (*map)[10][10])
+int		possible_shields(char map[10][10])
 {
 	int	n;
 	int	i;
@@ -53,7 +53,7 @@ int		possible_shields(char (*map)[10][10])
 		j = 0;
 		while (j < 10)
 		{
-			if ((*map)[i][j] == '.')
+			if (map[i][j] == '.')
 				n += spot_shield(map, i, j);
 			j++;
 		}
@@ -62,7 +62,7 @@ int		possible_shields(char (*map)[10][10])
 	return (n);
 }
 
-void	target_shield(char (*map)[10][10], int (*pdf)[10][10])
+void	target_shield(char map[10][10], int pdf[10][10])
 {
 	int	i;
 	int	j;
@@ -74,14 +74,14 @@ void	target_shield(char (*map)[10][10], int (*pdf)[10][10])
 		while (j < 10)
 		{
 			if (spot_shield(map, i, j))
-				(*pdf)[i][j] += 50;
+				pdf[i][j] += 50;
 			j++;
 		}
 		i++;
 	}
 }
 
-int		got_shield(char (*map)[10][10], int i, int j)
+int		got_shield(char map[10][10], int i, int j)
 {
 	if (check_spot("x", map, i, j - 1))
 		return (0);
@@ -99,11 +99,11 @@ int		got_shield(char (*map)[10][10], int i, int j)
 		return (0);
 	if (check_spot("x", map, i + 1, j + 1))
 		return (0);
-	(*map)[i][j] = ' ';
+	map[i][j] = ' ';
 	return (1);
 }
 
-void	clear_blocked(char (*map)[10][10])
+void	clear_blocked(char map[10][10])
 {
 	int	i;
 	int	j;
@@ -115,7 +115,7 @@ void	clear_blocked(char (*map)[10][10])
 		j = 0;
 		while (j < 10)
 		{
-			if ((*map)[i][j] == 'b')
+			if (map[i][j] == 'b')
 			{
 				ret = shoot(i, j);
 				if (ret == BLOCKED)

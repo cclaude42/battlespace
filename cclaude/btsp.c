@@ -6,7 +6,7 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:51:57 by cclaude           #+#    #+#             */
-/*   Updated: 2020/06/02 11:28:50 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/06/02 12:18:17 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int		main(void)
 	while (1)
 	{
 		map_coeff(map, pdf);
-		if (shield && possible_shields(map) < 8)
+		if (shield && possible_shields(map) < 14)
 			target_shield(map, pdf);
 		find_target(map, pdf, &i, &j);
 		if (i == 10 || j == 10)

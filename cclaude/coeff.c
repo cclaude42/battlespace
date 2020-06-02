@@ -6,7 +6,7 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/01 20:27:47 by cclaude           #+#    #+#             */
-/*   Updated: 2020/06/02 11:52:13 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/06/02 12:17:23 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,10 @@ int		compute_coeff(char map[10][10], int i, int j)
 	if (check_spot("b.", map, i, j) == 0)
 		return (0);
 	n = 9 - ft_abs((float)i - 4.5) - ft_abs((float)j - 4.5);
-	n += (check_spot(".", map, i, j - 1)) ? 4 : 0;
-	n += (check_spot(".", map, i, j + 1)) ? 4 : 0;
-	n += (check_spot(".", map, i - 1, j)) ? 4 : 0;
-	n += (check_spot(".", map, i + 1, j)) ? 4 : 0;
+	n += (check_spot(".", map, i, j - 1)) ? 6 : 0;
+	n += (check_spot(".", map, i, j + 1)) ? 6 : 0;
+	n += (check_spot(".", map, i - 1, j)) ? 6 : 0;
+	n += (check_spot(".", map, i + 1, j)) ? 6 : 0;
 	n += (check_spot(".", map, i - 1, j - 1)) ? 2 : 0;
 	n += (check_spot(".", map, i - 1, j + 1)) ? 2 : 0;
 	n += (check_spot(".", map, i + 1, j - 1)) ? 2 : 0;
@@ -74,6 +74,10 @@ int		compute_coeff(char map[10][10], int i, int j)
 	n += (check_spot(".", map, i, j + 2)) ? 2 : 0;
 	n += (check_spot(".", map, i - 2, j)) ? 2 : 0;
 	n += (check_spot(".", map, i + 2, j)) ? 2 : 0;
+	n += (check_spot(".", map, i - 2, j - 2)) ? 1 : 0;
+	n += (check_spot(".", map, i - 2, j + 2)) ? 1 : 0;
+	n += (check_spot(".", map, i + 2, j - 2)) ? 1 : 0;
+	n += (check_spot(".", map, i + 2, j + 2)) ? 1 : 0;
 	return (n);
 }
 

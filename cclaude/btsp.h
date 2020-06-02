@@ -6,15 +6,13 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:47:16 by cclaude           #+#    #+#             */
-/*   Updated: 2020/06/02 11:28:36 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/06/02 12:25:22 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BTSP_H
 # define BTSP_H
 
-# include <stdlib.h>
-# include <stdio.h>
 # include <unistd.h>
 
 # define MISS 0

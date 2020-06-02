@@ -6,7 +6,7 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/01 20:20:52 by cclaude           #+#    #+#             */
-/*   Updated: 2020/06/02 10:52:33 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/06/02 11:30:13 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,29 @@ int		sink_spot(char map[10][10], int i, int j)
 	else if (ret == MISS)
 		map[i][j] = ' ';
 	return (ret);
+}
+
+int		sink_line(char map[10][10])
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+		{
+			if (check_spot(".", map, i, j) && check_line(map, i, j))
+			{
+				if (sink_spot(map, i, j) > HIT)
+					return (1);
+			}
+			j++;
+		}
+		i++;
+	}
+	return (0);
 }
 
 int		sink_plus(char map[10][10], int i, int j)
@@ -87,9 +110,13 @@ int		sink_boat(char map[10][10], int i, int j)
 {
 	if (map[i][j] != 'o')
 		map[i][j] = 'x';
+	if (sink_line(map))
+		return (1);
 	if (orientation(map) >= 0)
 	{
 		if (sink_plus(map, i, j))
+			return (1);
+		if (sink_line(map))
 			return (1);
 		if (sink_cross(map, i, j))
 			return (1);
@@ -97,6 +124,8 @@ int		sink_boat(char map[10][10], int i, int j)
 	else
 	{
 		if (sink_cross(map, i, j))
+			return (1);
+		if (sink_line(map))
 			return (1);
 		if (sink_plus(map, i, j))
 			return (1);

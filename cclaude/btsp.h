@@ -6,7 +6,7 @@
 /*   By: cclaude <cclaude@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/26 19:47:16 by cclaude           #+#    #+#             */
-/*   Updated: 2020/06/02 10:49:55 by cclaude          ###   ########.fr       */
+/*   Updated: 2020/06/02 11:28:36 by cclaude          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,11 @@ void	map_coeff(char map[10][10], int pdf[10][10]);
 void	find_target(char map[10][10], int pdf[10][10], int *i, int *j);
 
 int		check_spot(char *marks, char map[10][10], int i, int j);
-int		shoot(int i, int j);
+int		check_line(char mp[10][10], int i, int j);
 
 int		sink_boat(char map[10][10], int i, int j);
+
+int		shoot(int i, int j);
 
 void	mark_sunk(char map[10][10], int i, int j);
 

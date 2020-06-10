@@ -1,16 +1,12 @@
 #!/bin/bash
-make re
-cp btsp ..
-
-cd ..
-
+make -C cclaude
 gcc -o battlespace battlespace.c
 
 TOT=0
 for i in {1..10000}
 do
 	./map_gen.py > map
-	OUT=$(./battlespace map btsp)
+	OUT=$(./battlespace map cclaude/btsp)
 	TOT=$(( TOT+OUT ))
 	if (( i % 100 == 0 ))
 	then
@@ -18,10 +14,6 @@ do
 	fi
 done
 echo
+rm map
 
-echo $TOT
-echo $(( TOT/10000 ))
-
-rm btsp
-
-cd cclaude
+echo $TOT "("$(( TOT/10000 ))")"

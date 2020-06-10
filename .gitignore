@@ -1,5 +1,7 @@
 battlespace
 btsp
 map
+maps
+maps/*
 cclaude/btsp
 cclaude/*.o

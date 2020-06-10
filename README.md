@@ -9,7 +9,7 @@ L'objectif de l'algorithme est de résoudre, en le moins de coups possible, une 
 
 Le programme écrit sur la sortie standard son coup, type "A9", et lit sur l'entrée standard le retour, type "HIT". La grille est résolue lorsque tous les vaisseaux ont été coulés. Le code doit être en C, à la norme, et n'a accès qu'aux fonctions basiques (read, write, etc).
 
-Pour plus d'informations, le sujet complet est dans RULES.md.
+Pour plus d'informations, le sujet complet est dans [RULES.md](https://github.com/cclaude42/battlespace/blob/master/RULES.md).
 
 ## L'algorithme
 

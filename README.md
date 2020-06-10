@@ -40,8 +40,12 @@ En cas de ``SUNK``, je marque les cases touchées comme coulées, et les cases a
 À chaque tour de boucle, je vérifie les positions possibles du bouclier. Si il y en a moins de 14, je les vise jusqu'à avoir détruit le bouclier. Je vise ensuite les cases qui m'ont renvoyé ``BLOCKED``, maintenent des ``HIT`` assurés.
 
 ### Le marquage
-Ma grille de char est originellement remplie de ``.``.
-En cas de ``MISS``, je marque la case d'un `` ``.
-En cas de ``HIT``, je marque d'un ``x``.
-En cas de ``SUNK``, je marque le vaisseau de ``o``.
-Enfin, en cas de ``BLOCKED``, je marque d'un ``b``.
+* Ma grille de char est originellement remplie de ``.``.
+
+* En cas de ``MISS``, je marque la case d'un `` ``.
+
+* En cas de ``HIT``, je marque d'un ``x``.
+
+* En cas de ``SUNK``, je marque le vaisseau de ``o``.
+
+* Enfin, en cas de ``BLOCKED``, je marque d'un ``b``.

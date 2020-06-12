@@ -20,7 +20,7 @@ Pour déterminer mon prochain coup, à chaque tour, je donne une valeur à chaqu
 
 La théorie serait que si on a déjà manqué autour d'une case, il y moins de chance qu'elle cache un vaisseau. Idem pour l'emplacement, les bords de la grille ont moins de chance de cacher des vaisseaux.
 
-Le coefficient est déterminé par compute_coeff (coeff.c), et une fois ma grille d'ints remplies, je vise simplement la case au coefficient le plus élevé.
+Le coefficient est déterminé par [compute_coeff()](https://github.com/cclaude42/battlespace/blob/master/cclaude/coeff.c), et une fois ma grille d'ints remplies, je vise simplement la case au coefficient le plus élevé.
 
 ### La boucle
 Ce tir me renverra ``MISS`` jusqu'à ce que je touche quelque chose. Je boucle donc jusqu'à avoir ``HIT``.
@@ -28,7 +28,7 @@ Ce tir me renverra ``MISS`` jusqu'à ce que je touche quelque chose. Je boucle d
 A chaque coup, je marque le résultat sur une grille de char de 10x10. En cas de ``BLOCKED``, je marque pour revenir plus tard. En cas de SUNK, je vérifie si j'ai coulé le bouclier. En cas de ``HIT``, je cherche à couler le vaisseau!
 
 ### Couler un vaisseau
-Lorsque je touche un vaisseau, je vise les alentours jusqu'à l'avoir coulé. Je tire sur les huit cases autour de la case touchée, et si j'ai un nouveau ``HIT``, j'appelle la fonction pour couler (sink_boat) en récursif. Éventuellement, toutes les cases seront touchées.
+Lorsque je touche un vaisseau, je vise les alentours jusqu'à l'avoir coulé. Je tire sur les huit cases autour de la case touchée, et si j'ai un nouveau ``HIT``, j'appelle la fonction pour couler ([sink_boat()](https://github.com/cclaude42/battlespace/blob/master/cclaude/sink.c)) en récursif. Éventuellement, toutes les cases seront touchées.
 
 Pour optimiser le processus, je vise en priorité les lignes ou les diagonales, en fonction de l'orientation des vaisseaux que j'ai déjà touché. Je vise également les fins de lignes régulièrement ; si deux cases à la suite sont touchées, il est naturel de viser la case dans le prolongement.
 
